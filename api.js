@@ -101,7 +101,6 @@ async function clearCart() {
  */
 async function createOrder(userInfo) {
   // 請實作此函式
-  //console.log(userInfo);
   try{
     const url=`${BASE_URL}/api/livejs/v1/customer/${API_PATH}/orders`;
     const data={
@@ -109,14 +108,11 @@ async function createOrder(userInfo) {
       user: userInfo
     }
   };
-    // const response = await axios.post(url, { "data": {"user":userInfo}  });
-    // const response = await axios.post(url, { data: userInfo  });
     const response = await axios.post(url, data);
-    //console.log(response.data); 
     return response.data;
   }catch(error){
     console.log(error.message);
-  }
+  };
 }
 
 // ========== 管理員 API ==========
@@ -151,7 +147,6 @@ async function fetchOrders() {
  */
 async function updateOrderStatus(orderId, isPaid) {
   // 請實作此函式
-  console.log(orderId, isPaid);
   const url=`${BASE_URL}/api/livejs/v1/admin/${API_PATH}/orders`;
   const data={ 
     data: {
@@ -164,8 +159,7 @@ async function updateOrderStatus(orderId, isPaid) {
       authorization: ADMIN_TOKEN
     }
   };
-  const response = await axios.put(url,
-   data,headers);
+  const response = await axios.put(url,data,headers);
   return response.data;
 }
 
