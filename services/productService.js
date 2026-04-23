@@ -13,6 +13,8 @@ async function getProducts() {
   // 請實作此函式
   // 提示：使用 fetchProducts() 取得產品陣列
   // 回傳格式：{ products, count: 產品數量 }
+  const products = await fetchProducts();
+  return {products,count:products.length};
 }
 
 /**
