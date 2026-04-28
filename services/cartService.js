@@ -12,6 +12,8 @@ const { validateCartQuantity, formatCurrency } = require('../utils');
 async function getCart() {
   // 請實作此函式
   // 提示：呼叫 fetchCart() 取得購物車資料並回傳
+  const cartsObj=await fetchCart();
+  return cartsObj;
 }
 
 /**
@@ -25,6 +27,18 @@ async function addProductToCart(productId, quantity) {
   // 提示：先用 utils validateCartQuantity() 驗證數量，驗證失敗時回傳 { success: false, error: ... }
   // 驗證通過後，呼叫 addToCart() 加入購物車
   // 使用 try/catch 處理錯誤，回傳格式：{ success: true, data: ... } / { success: false, error: ... }
+  const hasQuantity=validateCartQuantity(quantity);
+  if(hasQuantity.isValid){
+    try{
+      let data= await addToCart(productId, quantity);
+      return { success: true, data: data };
+    }catch(error){
+      console.log(error);
+      //return { success: false, error: error }
+    };
+  }else{
+    return { success: false, error: "驗證失敗" };
+  };
 }
 
 /**
@@ -38,6 +52,17 @@ async function updateProduct(cartId, quantity) {
   // 提示：先用 utils validateCartQuantity() 驗證數量，驗證失敗時回傳 { success: false, error: ... }
   // 驗證通過後，呼叫 updateCartItem() 更新數量
   // 使用 try/catch 處理錯誤，回傳格式：{ success: true, data: ... } / { success: false, error: ... }
+  const hasQuantity=validateCartQuantity(quantity);
+  if(hasQuantity.isValid){
+    try{
+      let data= await updateCartItem(cartId, quantity);
+      return { success: true, data: data };
+    }catch(error){
+      console.log(error);
+    };
+  }else{
+    return { success: false, error: "驗證失敗" };
+  };
 }
 
 /**
@@ -49,6 +74,12 @@ async function removeProduct(cartId) {
   // 請實作此函式
   // 提示：呼叫 deleteCartItem()，使用 try/catch 處理錯誤
   // 回傳格式：{ success: true, data: ... } / { success: false, error: ... }
+  try{
+      let data= await deleteCartItem(cartId);
+      return { success: true, data: data };
+    }catch(error){
+      console.log(error);
+    };
 }
 
 /**
@@ -59,6 +90,13 @@ async function emptyCart() {
   // 請實作此函式
   // 提示：呼叫 clearCart()，使用 try/catch 處理錯誤
   // 回傳格式：{ success: true, data: ... } / { success: false, error: ... }
+  try{
+      let data= await clearCart();
+      console.log(data);
+      return { success: true, data: data };
+    }catch(error){
+      console.log(error);
+    };
 }
 
 /**
@@ -69,6 +107,13 @@ async function getCartTotal() {
   // 請實作此函式
   // 提示：呼叫 fetchCart() 取得購物車資料
   // 回傳格式：{ total: 原始金額, finalTotal: 折扣後金額, itemCount: 商品筆數 }
+  const response=await fetchCart();
+  return {
+    total:response.total,
+    finalTotal:response.finalTotal,
+    itemCount: response.carts.length
+  };
+
 }
 
 /**
@@ -90,6 +135,19 @@ function displayCart(cart) {
   // ----------------------------------------
   // 商品總計：NT$ 1,600
   // 折扣後金額：NT$ 1,600
+  if(!cart.carts || cart.carts.length===0){
+    return "購物車是空的";
+  }else{
+    return `購物車內容：
+    ----------------------------------------
+    1. ${cart.carts.product.title}
+       數量：${cart.carts.quantity}
+       單價：${formatCurrency(cart.carts.product.price)}
+       小計：${formatCurrency(cart.carts.product.price*cart.carts.quantity)}
+   ----------------------------------------
+     商品總計：${formatCurrency(cart.total)}
+     折扣後金額：${formatCurrency(cart.finalTotal)}`;
+  };
 }
 
 module.exports = {
