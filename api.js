@@ -27,7 +27,6 @@ async function fetchCart() {
   // 請實作此函式
   const url=`${BASE_URL}/api/livejs/v1/customer/${API_PATH}/carts`;
   const response = await axios.get(url);
-  console.log(response.data);
   let data=response.data;
   let cartsObj={carts:data.carts,total:data.total,finalTotal:data.finalTotal};
   return cartsObj;

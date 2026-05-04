@@ -42,7 +42,7 @@ async function getProductById(productId) {
   // 若找不到，回傳 null
   const products = await fetchProducts();
   const findProduct=products.find(product=>product.id===productId);
-  return findProduct ||null;
+  return findProduct || null;
 }
 
 /**
@@ -74,13 +74,13 @@ function displayProducts(products) {
   //    原價：NT$ 1,000
   //    售價：NT$ 800 (8折)
   // ----------------------------------------
-  products.forEach(product=>{
+  products.forEach((product,index)=>{
     return `產品列表：
     ----------------------------------------
-    1. ${product.title}
+    ${index+1}. ${product.title}
        分類：${product.category}
        原價：${formatCurrency(product.oringin_price)}
-       售價：${formatCurrency(product.price)}(${getDiscountRate(product)})`;
+       售價：${formatCurrency(product.price)} (${getDiscountRate(product)})`;
   });
 }
 

@@ -61,8 +61,8 @@ function getDaysAgo(timestamp) {
   // 1. 用 dayjs() 取得今天
   // 2. 用 dayjs.unix(timestamp) 取得日期
   // 3. 用 .diff() 計算天數差異
-  const today=dayjs();
-  const otherDay=dayjs.unix(timestamp);
+  const today=dayjs().startOf('day');
+  const otherDay=dayjs.unix(timestamp).startOf('day');
   const diffDay=today.diff(otherDay,"day");
   if(diffDay===0){
     return '今天';
@@ -105,11 +105,12 @@ function validateOrderUser(data) {
   if(!isPaymentValid){
     errors.push("付款方式不正確");
   };
-  if(errors.length==0){
-    return { isValid: true, errors: [] };
-  }else{
-    return { isValid: false, errors };
-  };
+  return { isValid: errors.length==0, errors };
+  // if(errors.length==0){
+  //   return { isValid: true, errors: [] };
+  // }else{
+  //   return { isValid: false, errors };
+  // };
 
 }
 
@@ -125,11 +126,16 @@ function validateOrderUser(data) {
  */
 function validateCartQuantity(quantity) {
   // 請實作此函式
-  if(!Number.isInteger(quantity) || quantity<1 || quantity>99){
-    return { isValid: false, error: "數量必須是1-99的正整數" };
-  }else{
-    return { isValid: true, error:"" };
+  if(!Number.isInteger(quantity)){
+    return { isValid: false, error: "必須是正整數" };
   };
+  if(quantity<1){
+    return { isValid: false, error: "不可小於 1" };
+  };
+  if(quantity>99){
+    return { isValid: false, error: "不可大於 99" };
+  };
+    return { isValid: true, error:"" };
 
 }
 
@@ -151,7 +157,8 @@ function validateCartQuantity(quantity) {
 function formatCurrency(amount) {
   // 請實作此函式
   //console.log(`NT ${amount.toLocaleString('zh-TW',{style:'currency',currency: 'TWD'})}`);
-  return `NT$ ${amount.toLocaleString('zh-TW')}`;
+  //console.log(`NT ${amount.toLocaleString('zh-TW')}`);
+  return `NT$ ${Number(amount).toLocaleString('zh-TW')}`;
 }
 
 module.exports = {

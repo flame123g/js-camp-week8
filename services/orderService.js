@@ -15,6 +15,17 @@ async function placeOrder(userInfo) {
   // 提示：先用 utils validateOrderUser() 驗證使用者資料，驗證失敗時回傳 { success: false, errors: [...] }
   // 驗證通過後，呼叫 createOrder() 建立訂單
   // 使用 try/catch 處理錯誤，回傳格式：{ success: true, data: ... } / { success: false, errors: [...] }
+  const verifyData=validateOrderUser(userInfo);
+  if(verifyData.isValid){
+    try{
+      const response=await createOrder(userInfo);
+      return { success: true, data: response};
+      }catch(error){
+        return { success: false, errors: [error.message]};
+      };
+  }else{
+    return { success: false, errors: verifyData.errors}
+  };
 }
 
 /**
@@ -24,6 +35,8 @@ async function placeOrder(userInfo) {
 async function getOrders() {
   // 請實作此函式
   // 提示：呼叫 fetchOrders() 取得訂單陣列並回傳
+  const orders=await fetchOrders();
+  return orders;
 }
 
 /**
@@ -33,6 +46,9 @@ async function getOrders() {
 async function getUnpaidOrders() {
   // 請實作此函式
   // 提示：呼叫 fetchOrders() 後，篩選出 paid 為 false 的訂單
+  const orders=await fetchOrders();
+  const UnpaidOrder=orders.filter(order=>order.paid==false);
+  return UnpaidOrder;
 }
 
 /**
@@ -42,6 +58,9 @@ async function getUnpaidOrders() {
 async function getPaidOrders() {
   // 請實作此函式
   // 提示：呼叫 fetchOrders() 後，篩選出 paid 為 true 的訂單
+  const orders=await fetchOrders();
+  const PaidOrder=orders.filter(order=>order.paid==true);
+  return PaidOrder;
 }
 
 /**
@@ -54,6 +73,12 @@ async function updatePaymentStatus(orderId, isPaid) {
   // 請實作此函式
   // 提示：呼叫 updateOrderStatus()，使用 try/catch 處理錯誤
   // 回傳格式：{ success: true, data: ... } / { success: false, error: ... }
+  try{
+    const data=await updateOrderStatus(orderId, isPaid);
+    return { success: true, data: data } ;
+  }catch(error){
+    return { success: false, error: "連線錯誤" }
+  };
 }
 
 /**
@@ -65,6 +90,12 @@ async function removeOrder(orderId) {
   // 請實作此函式
   // 提示：呼叫 deleteOrder()，使用 try/catch 處理錯誤
   // 回傳格式：{ success: true, data: ... } / { success: false, error: ... }
+  try{
+    const data=await deleteOrder(orderId);
+    return { success: true, data: data };
+  }catch(error){
+    return { success: false, error: "連線錯誤" }
+  };
 }
 
 /**
@@ -83,8 +114,35 @@ async function removeOrder(orderId) {
  * - createdAt: 格式化後的建立時間，使用 utils formatDate()
  * - daysAgo: 距離今天為幾天前，使用 utils getDaysAgo()
  */
+/*{
+    id: 'order-2',
+    user: { name: '測試2', tel: '0987654321', email: 'test2@test.com', address: '測試地址2', payment: 'Credit Card' },
+    products: {},
+    total: 2000,
+    paid: true,
+    createdAt: 1609545600
+  } */
 function formatOrder(order) {
   // 請實作此函式
+  // let formatOrder={
+  //   ...order,
+  //   paidText: order.paid === true ? "已付款" : "未付款",
+  //   createdAt:formatDate(order.createdAt),
+  //   totalFormatted:formatCurrency(order.total),
+  //   daysAgo:getDaysAgo(order.createdAt)
+  // };
+   let formatOrder={
+    ...order,
+    createdAt:formatDate(order.createdAt),
+    totalFormatted:formatCurrency(order.total),
+    daysAgo:getDaysAgo(order.createdAt)
+  };
+  if(order.paid==true){
+    formatOrder.paidText="已付款";
+  }else{
+    formatOrder.paidText="未付款";
+  };
+  return formatOrder;
 }
 
 /**
@@ -113,6 +171,27 @@ function displayOrders(orders) {
   // 商品明細：
   //   - 產品名稱 x 2（產品數量）
   // ========================================
+  if(orders.length===0){
+    return "沒有訂單";
+  }else{
+    let mapOrder=orders.map((order,index)=>{
+      return `訂單列表：
+   ========================================
+   訂單 ${index+1}
+   ----------------------------------------
+   訂單編號：${formatOrder(order.id)}
+   顧客姓名：${formatOrder(order.user.name)}
+   聯絡電話：${formatOrder(order.user.tel)}
+   寄送地址：${formatOrder(order.user.address)}
+   付款方式：${formatOrder(order.user.payment)}
+   訂單金額：${formatOrder(order.total)}
+   付款狀態：${formatOrder(order.paidText)}
+   建立時間：${formatOrder(order.totalFormatted)}(${formatOrder(order.daysAgo)})
+   ----------------------------------------
+   商品明細：
+     - 產品名稱 x ${formatOrder(order.products.length)}（產品數量）
+   ========================================`;})
+  };
 }
 
 module.exports = {

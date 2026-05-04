@@ -33,11 +33,11 @@ async function addProductToCart(productId, quantity) {
       let data= await addToCart(productId, quantity);
       return { success: true, data: data };
     }catch(error){
-      console.log(error);
-      //return { success: false, error: error }
+      //console.log(error);
+      return { success: false, error: error }
     };
   }else{
-    return { success: false, error: "驗證失敗" };
+    return { success: false, error: hasQuantity.error };
   };
 }
 
@@ -58,10 +58,11 @@ async function updateProduct(cartId, quantity) {
       let data= await updateCartItem(cartId, quantity);
       return { success: true, data: data };
     }catch(error){
-      console.log(error);
+      //console.log(error);
+      return { success: false, error: error };
     };
   }else{
-    return { success: false, error: "驗證失敗" };
+    return { success: false, error: hasQuantity.error };
   };
 }
 
@@ -78,7 +79,8 @@ async function removeProduct(cartId) {
       let data= await deleteCartItem(cartId);
       return { success: true, data: data };
     }catch(error){
-      console.log(error);
+      //console.log(error);
+      return { success: false, error: error }
     };
 }
 
@@ -92,10 +94,10 @@ async function emptyCart() {
   // 回傳格式：{ success: true, data: ... } / { success: false, error: ... }
   try{
       let data= await clearCart();
-      console.log(data);
       return { success: true, data: data };
     }catch(error){
-      console.log(error);
+      //console.log(error);
+      return { success: false, error: error }
     };
 }
 
@@ -135,18 +137,21 @@ function displayCart(cart) {
   // ----------------------------------------
   // 商品總計：NT$ 1,600
   // 折扣後金額：NT$ 1,600
+  console.log(cart.carts);
   if(!cart.carts || cart.carts.length===0){
     return "購物車是空的";
   }else{
-    return `購物車內容：
+    let data=cart.carts.map((item,index)=>{
+      return `購物車內容：
     ----------------------------------------
-    1. ${cart.carts.product.title}
-       數量：${cart.carts.quantity}
-       單價：${formatCurrency(cart.carts.product.price)}
-       小計：${formatCurrency(cart.carts.product.price*cart.carts.quantity)}
-   ----------------------------------------
-     商品總計：${formatCurrency(cart.total)}
-     折扣後金額：${formatCurrency(cart.finalTotal)}`;
+      ${index+1}. ${item.product.title}
+       數量：${item.quantity}
+       單價：${formatCurrency(item.product.price)}
+       小計：${formatCurrency(item.product.price*item.quantity)}
+     ----------------------------------------
+     商品總計：${formatCurrency(item.total)}
+     折扣後金額：${formatCurrency(item.finalTotal)}`;
+    });
   };
 }
 
