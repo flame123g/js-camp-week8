@@ -6,7 +6,9 @@ const axios = require('axios');
 const { API_PATH, BASE_URL, ADMIN_TOKEN } = require('./config');
 
 // ========== 客戶端 API ==========
-
+//助教建議:可在全域定義一個 API 路由 apiUrl 以及 headers 相關設定，就不用在每個函式重複帶入這段囉。
+const apiUrl=`${BASE_URL}/api/livejs/v1/customer/${API_PATH}`;
+const cartsApiUrl=`${BASE_URL}/api/livejs/v1/customer/${API_PATH}/carts`;
 /**
  * 取得產品列表
  * @returns {Promise<Array>}
@@ -14,7 +16,8 @@ const { API_PATH, BASE_URL, ADMIN_TOKEN } = require('./config');
 async function fetchProducts() {
   // 請實作此函式
   // 回傳 response.data.products
-  const url=`${BASE_URL}/api/livejs/v1/customer/${API_PATH}/products`;
+  //const url=`${BASE_URL}/api/livejs/v1/customer/${API_PATH}/products`;
+  const url=apiUrl+"/products";
   const response = await axios.get(url);
   return response.data.products;  
 }
@@ -25,8 +28,8 @@ async function fetchProducts() {
  */
 async function fetchCart() {
   // 請實作此函式
-  const url=`${BASE_URL}/api/livejs/v1/customer/${API_PATH}/carts`;
-  const response = await axios.get(url);
+  //const url=`${BASE_URL}/api/livejs/v1/customer/${API_PATH}/carts`;
+  const response = await axios.get(cartsApiUrl);
   let data=response.data;
   let cartsObj={carts:data.carts,total:data.total,finalTotal:data.finalTotal};
   return cartsObj;
@@ -40,14 +43,14 @@ async function fetchCart() {
  */
 async function addToCart(productId, quantity) {
   // 請實作此函式
-  const url=`${BASE_URL}/api/livejs/v1/customer/${API_PATH}/carts`;
+  //const url=`${BASE_URL}/api/livejs/v1/customer/${API_PATH}/carts`;
   const data={
     data: {
       productId: productId,
       quantity: quantity
     }
 };
-  const response = await axios.post(url, data);
+  const response = await axios.post(cartsApiUrl, data);
   return response.data;
 }
 
@@ -59,14 +62,14 @@ async function addToCart(productId, quantity) {
  */
 async function updateCartItem(cartId, quantity) {
   // 請實作此函式
-  const url=`${BASE_URL}/api/livejs/v1/customer/${API_PATH}/carts`;
+  //const url=`${BASE_URL}/api/livejs/v1/customer/${API_PATH}/carts`;
   const data={
     data: {
       id: cartId,
       quantity: quantity
     }
   };
-  const response = await axios.patch(url,data);
+  const response = await axios.patch(cartsApiUrl,data);
   return response.data;
 }
 
@@ -77,7 +80,8 @@ async function updateCartItem(cartId, quantity) {
  */
 async function deleteCartItem(cartId) {
   // 請實作此函式
-  const url=`${BASE_URL}/api/livejs/v1/customer/${API_PATH}/carts/${cartId}`;
+  //const url=`${BASE_URL}/api/livejs/v1/customer/${API_PATH}/carts/${cartId}`;
+  const url=cartsApiUrl+`/${cartId}`;
   const response = await axios.delete(url);
   return response.data;
 }
@@ -88,8 +92,8 @@ async function deleteCartItem(cartId) {
  */
 async function clearCart() {
   // 請實作此函式
-  const url=`${BASE_URL}/api/livejs/v1/customer/${API_PATH}/carts`;
-  const response = await axios.delete(url);
+  //const url=`${BASE_URL}/api/livejs/v1/customer/${API_PATH}/carts`;
+  const response = await axios.delete(cartsApiUrl);
   return response.data;
 }
 //
@@ -101,7 +105,8 @@ async function clearCart() {
 async function createOrder(userInfo) {
   // 請實作此函式
   try{
-    const url=`${BASE_URL}/api/livejs/v1/customer/${API_PATH}/orders`;
+    //const url=`${BASE_URL}/api/livejs/v1/customer/${API_PATH}/orders`;
+    const url=apiUrl+"/orders";
     const data={
     data: {
       user: userInfo
@@ -123,18 +128,23 @@ async function createOrder(userInfo) {
       authorization: ADMIN_TOKEN
     }
  */
-
+const headers={
+    headers: {
+      authorization: ADMIN_TOKEN
+    }};
+const adminApi=`${BASE_URL}/api/livejs/v1/admin/${API_PATH}/orders`;
 /**
  * 取得訂單列表
  * @returns {Promise<Array>}
  */
 async function fetchOrders() {
   // 請實作此函式
-  const url=`${BASE_URL}/api/livejs/v1/admin/${API_PATH}/orders`;
-  const response = await axios.get(url,{
-    headers: {
-      authorization: ADMIN_TOKEN
-    }});
+  // const url=`${BASE_URL}/api/livejs/v1/admin/${API_PATH}/orders`;
+  // const response = await axios.get(url,{
+    // headers: {
+    //   authorization: ADMIN_TOKEN
+    // }});
+  const response = await axios.get(adminApi,headers);
   return response.data.orders;
 }
 
@@ -146,19 +156,20 @@ async function fetchOrders() {
  */
 async function updateOrderStatus(orderId, isPaid) {
   // 請實作此函式
-  const url=`${BASE_URL}/api/livejs/v1/admin/${API_PATH}/orders`;
+  //const url=`${BASE_URL}/api/livejs/v1/admin/${API_PATH}/orders`;
   const data={ 
     data: {
       id: orderId,
       paid: isPaid
     }
   };
-  const headers={
-    headers: {
-      authorization: ADMIN_TOKEN
-    }
-  };
-  const response = await axios.put(url,data,headers);
+  // const headers={
+  //   headers: {
+  //     authorization: ADMIN_TOKEN
+  //   }
+  // };
+  // const response = await axios.put(url,data,headers);
+  const response = await axios.put(adminApi,data,headers);
   return response.data;
 }
 
@@ -169,11 +180,13 @@ async function updateOrderStatus(orderId, isPaid) {
  */
 async function deleteOrder(orderId) {
   // 請實作此函式
-  const url=`${BASE_URL}/api/livejs/v1/admin/${API_PATH}/orders/${orderId}`;
-  const response = await axios.delete(url,{
-    headers: {
-      authorization: ADMIN_TOKEN
-    }});
+  // const url=`${BASE_URL}/api/livejs/v1/admin/${API_PATH}/orders/${orderId}`;
+  // const response = await axios.delete(url,{
+  //   headers: {
+  //     authorization: ADMIN_TOKEN
+  //   }});
+  const url=adminApi+`/${orderId}`;
+  const response = await axios.delete(url,headers);
   return response.data;
 }
 

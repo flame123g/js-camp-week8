@@ -21,7 +21,7 @@ async function placeOrder(userInfo) {
       const response=await createOrder(userInfo);
       return { success: true, data: response};
       }catch(error){
-        return { success: false, errors: [error.message]};
+        return { success: false, errors: error.message};
       };
   }else{
     return { success: false, errors: verifyData.errors}
@@ -77,7 +77,7 @@ async function updatePaymentStatus(orderId, isPaid) {
     const data=await updateOrderStatus(orderId, isPaid);
     return { success: true, data: data } ;
   }catch(error){
-    return { success: false, error: "連線錯誤" }
+    return { success: false, error: error.message }
   };
 }
 
@@ -94,7 +94,7 @@ async function removeOrder(orderId) {
     const data=await deleteOrder(orderId);
     return { success: true, data: data };
   }catch(error){
-    return { success: false, error: "連線錯誤" }
+    return { success: false, error: error.message }
   };
 }
 
@@ -151,6 +151,10 @@ function formatOrder(order) {
  */
 function displayOrders(orders) {
   // 請實作此函式
+/*助教建議:
+displayOrders 目前寫法有誤，formatOrder 預期代入的參數為物件格式，
+所以應改成先定義一個變數來存放 formatOrder 回傳的物件資料，再使用該變數來取出對應屬性*/
+//===依據助教講解，此題只是單純地將資料console出來而已，似印出報表這樣===================================================
   // 提示：先判斷訂單陣列是否為空，若空則輸出「沒有訂單」
   // 使用 formatOrder() 格式化每筆訂單後再輸出
   //
@@ -172,25 +176,29 @@ function displayOrders(orders) {
   //   - 產品名稱 x 2（產品數量）
   // ========================================
   if(orders.length===0){
-    return "沒有訂單";
+    console.log("沒有訂單");
   }else{
-    let mapOrder=orders.map((order,index)=>{
-      return `訂單列表：
-   ========================================
-   訂單 ${index+1}
+    console.log(`訂單列表：
+   ========================================`);
+    orders.forEach((order,index)=>{
+      const useFormatOrder=formatOrder(order);
+      console.log(`訂單 ${index+1}`);
+   console.log(`----------------------------------------`);
+   console.log(`訂單編號：${useFormatOrder.id}
+   顧客姓名：${useFormatOrder.user.name}
+   聯絡電話：${useFormatOrder.user.tel}
+   寄送地址：${useFormatOrder.user.address}
+   付款方式：${useFormatOrder.user.payment}
+   訂單金額：${useFormatOrder.totalFormatted}
+   付款狀態：${useFormatOrder.paidText}
+   建立時間：${useFormatOrder.createdAt}(${useFormatOrder.daysAgo})
    ----------------------------------------
-   訂單編號：${formatOrder(order.id)}
-   顧客姓名：${formatOrder(order.user.name)}
-   聯絡電話：${formatOrder(order.user.tel)}
-   寄送地址：${formatOrder(order.user.address)}
-   付款方式：${formatOrder(order.user.payment)}
-   訂單金額：${formatOrder(order.total)}
-   付款狀態：${formatOrder(order.paidText)}
-   建立時間：${formatOrder(order.totalFormatted)}(${formatOrder(order.daysAgo)})
-   ----------------------------------------
-   商品明細：
-     - 產品名稱 x ${formatOrder(order.products.length)}（產品數量）
-   ========================================`;})
+   商品明細：`);
+   order.products.forEach(item=>{
+    console.log(`  - ${item.title} x ${item.quantity}`);
+   });
+   console.log(`========================================`);
+  });
   };
 }
 

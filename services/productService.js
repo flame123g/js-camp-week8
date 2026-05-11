@@ -63,6 +63,10 @@ async function getCategories() {
  */
 function displayProducts(products) {
   // 請實作此函式
+/*助教建議:
+1.displayProducts 的 forEach 用法有誤，forEach 不會 return 任何值，會建議改用 console.log 印出相關資料
+2.承上點，原價 origin_price 有拼錯字，需調整一下
+*/
   // 提示：使用 forEach 遍歷產品陣列，依序輸出每筆產品資訊
   // 會使用到 utils getDiscountRate() 計算折扣率，以及 utils formatCurrency() 格式化金額
   //
@@ -74,13 +78,16 @@ function displayProducts(products) {
   //    原價：NT$ 1,000
   //    售價：NT$ 800 (8折)
   // ----------------------------------------
+  console.log( `產品列表：`);
+  console.log( `----------------------------------------`);
   products.forEach((product,index)=>{
-    return `產品列表：
-    ----------------------------------------
+    console.log( `
     ${index+1}. ${product.title}
        分類：${product.category}
-       原價：${formatCurrency(product.oringin_price)}
-       售價：${formatCurrency(product.price)} (${getDiscountRate(product)})`;
+       原價：${formatCurrency(product.origin_price)}
+       售價：${formatCurrency(product.price)} (${getDiscountRate(product)})`);
+    console.log( `----------------------------------------`);
+  
   });
 }
 

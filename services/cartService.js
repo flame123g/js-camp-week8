@@ -12,7 +12,7 @@ const { validateCartQuantity, formatCurrency } = require('../utils');
 async function getCart() {
   // 請實作此函式
   // 提示：呼叫 fetchCart() 取得購物車資料並回傳
-  const cartsObj=await fetchCart();
+  const cartsObj=await fetchCart();  //通常呼叫get API不會有錯，所以不會用try catch包起來(get以外的method 都用try catch)
   return cartsObj;
 }
 
@@ -122,11 +122,11 @@ async function getCartTotal() {
  * 顯示購物車內容
  * @param {Object} cart - 購物車資料
  */
+//此題只是單純地將資料console出來而已，似印出報表這樣===================================================
 function displayCart(cart) {
   // 請實作此函式
   // 提示：先判斷購物車是否為空（cart.carts 不存在或長度為 0），若空則輸出「購物車是空的」
   // 會使用到 utils formatCurrency() 來格式化金額
-  //
   // 預期輸出格式：
   // 購物車內容：
   // ----------------------------------------
@@ -137,21 +137,20 @@ function displayCart(cart) {
   // ----------------------------------------
   // 商品總計：NT$ 1,600
   // 折扣後金額：NT$ 1,600
-  console.log(cart.carts);
   if(!cart.carts || cart.carts.length===0){
-    return "購物車是空的";
+    console.log("購物車是空的");
   }else{
-    let data=cart.carts.map((item,index)=>{
-      return `購物車內容：
+    cart.carts.forEach((item,index)=>{
+      console.log(`購物車內容：
     ----------------------------------------
       ${index+1}. ${item.product.title}
        數量：${item.quantity}
        單價：${formatCurrency(item.product.price)}
        小計：${formatCurrency(item.product.price*item.quantity)}
-     ----------------------------------------
-     商品總計：${formatCurrency(item.total)}
-     折扣後金額：${formatCurrency(item.finalTotal)}`;
+     ----------------------------------------`);
     });
+    console.log(`商品總計：${formatCurrency(cart.total)}`);
+    console.log(`折扣後金額：${formatCurrency(cart.finalTotal)}`);
   };
 }
 

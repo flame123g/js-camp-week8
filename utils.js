@@ -85,12 +85,13 @@ function getDaysAgo(timestamp) {
  */
 function validateOrderUser(data) {
   // 請實作此函式
+//助教建議:validateOrderUser 的字串驗證在遇到空白字串時也會通過，建議加上 .trim() 處理空白字串
   const errors=[]; 
   const telRegex=/^09\d{8}$/;
   const isEmailValid = data.email.includes('@');
   const paymentMethods=['ATM', 'Credit Card', 'Apple Pay'];
   const isPaymentValid = paymentMethods.includes(data.payment);  
-  if(!data.name || data.name===" "){
+  if(!data.name || data.name.trim()===" "){
     errors.push("姓名不可為空");
   };
   if(!telRegex.test(data.tel)){
@@ -99,7 +100,7 @@ function validateOrderUser(data) {
   if(!data.email || !isEmailValid){
     errors.push("電子郵件格式不正確");
   };
-  if(!data.address || data.address===" "){
+  if(!data.address || data.address.trim()===" "){
     errors.push("地址不可為空");
   };
   if(!isPaymentValid){
